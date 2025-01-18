@@ -9,10 +9,12 @@ const SineWaveCanvas = () => {
 	const [omega, setOmega] = useState(50);
 	const [angle, setAngle] = useState(0);
 	const [animate, setAnimate] = useState(true);
+	const [speed, setSpeed] = useState(0);
 
 	const amplitudeRef = useRef(amplitude);
 	const omegaRef = useRef(omega);
 	const angleRef = useRef(angle);
+	const speedRef = useRef(speed);
 	const counter = useRef(0);
 	const requestRef = useRef(null);
 
@@ -21,7 +23,8 @@ const SineWaveCanvas = () => {
 		amplitudeRef.current = amplitude;
 		omegaRef.current = omega;
 		angleRef.current = angle;
-	}, [amplitude, omega, angle]);
+        speedRef.current = speed;
+	}, [amplitude, omega, angle, speed]);
 
 	const drawWave = () => {
 		const canvas = canvasRef.current;
@@ -54,7 +57,7 @@ const SineWaveCanvas = () => {
 		for (let x = 0; x < canvas.offsetWidth; x++) {
 			const y =
 				(((amplitudeRef.current / 100) * (canvasHeight - 20)) / 2) *
-					Math.sin((omegaRef.current / 1000) * (x - offsetX) - counter.current / 50) +
+					Math.sin((omegaRef.current / 1000) * (x - offsetX) - counter.current / (100 - speedRef.current)) +
 				offsetY;
 			ctx.lineTo(x, y);
 		}
@@ -68,7 +71,7 @@ const SineWaveCanvas = () => {
 			for (let x = 0; x < canvas.offsetWidth; x++) {
 				const y =
 					(((amplitudeRef.current / 100) * (canvasHeight - 20)) / 2) *
-						Math.sin((omegaRef.current / 1000) * (x - offsetX) + angleRef.current - counter.current / 50) +
+						Math.sin((omegaRef.current / 1000) * (x - offsetX) + angleRef.current - counter.current / (100 - speedRef.current)) +
 					offsetY;
 				ctx.lineTo(x, y);
 			}
@@ -114,6 +117,8 @@ const SineWaveCanvas = () => {
 				<Slider defaultValue={angle} min={0} max={360} value={angle} onChange={(_, val) => setAngle(val)} />
 				<p>Animate</p>
 				<Switch checked={animate} onChange={(_, val) => setAnimate(val)} />
+				<p>Speed</p>
+				<Slider defaultValue={speed} min={0} max={99} value={speed} onChange={(_, val) => setSpeed(val)} />
 			</div>
 			<canvas ref={canvasRef} height={canvasHeight} style={{border: "1px solid black", width: "100%"}} />
 		</>
